@@ -2,22 +2,28 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthService from '../services/auth.service';
 
-const Login = () => {
+const Signup = () => {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [successful, setSuccessful] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleSignup = (e) => {
     e.preventDefault();
     setMessage('');
+    setSuccessful(false);
     setLoading(true);
 
-    AuthService.login(username, password).then(
-      () => {
-        navigate('/books');
-        window.location.reload();
+    AuthService.register(username, email, password).then(
+      (response) => {
+        setMessage(response.data.message);
+        setSuccessful(true);
+        setLoading(false);
+        // Optional: redirect after delay
+        setTimeout(() => navigate('/login'), 2000);
       },
       (error) => {
         const resMessage =
@@ -27,8 +33,9 @@ const Login = () => {
           error.message ||
           error.toString();
 
-        setLoading(false);
         setMessage(resMessage);
+        setSuccessful(false);
+        setLoading(false);
       }
     );
   };
@@ -36,8 +43,8 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg rounded-xl">
-        <h3 className="text-2xl font-bold text-center">Login to Library System</h3>
-        <form onSubmit={handleLogin}>
+        <h3 className="text-2xl font-bold text-center">Sign Up</h3>
+        <form onSubmit={handleSignup}>
           <div className="mt-4">
             <div>
               <label className="block" htmlFor="username">Username</label>
@@ -47,6 +54,19 @@ const Login = () => {
                 className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                required
+                minLength="3"
+                maxLength="20"
+              />
+            </div>
+            <div className="mt-4">
+              <label className="block" htmlFor="email">Email</label>
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -59,29 +79,31 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength="6"
+                maxLength="40"
               />
             </div>
             <div className="flex items-baseline justify-between">
               <button
-                className="w-full px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900 disabled:bg-blue-300"
+                className="w-full px-6 py-2 mt-4 text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:bg-green-300"
                 disabled={loading}
               >
-                {loading ? 'Logging in...' : 'Login'}
+                {loading ? 'Signing up...' : 'Sign Up'}
               </button>
             </div>
           </div>
         </form>
         {message && (
-          <div className="mt-4 text-red-500 text-sm text-center">
+          <div className={`mt-4 text-sm text-center ${successful ? 'text-green-500' : 'text-red-500'}`}>
              {message}
           </div>
         )}
         <div className="mt-4 text-center">
-            <Link to="/signup" className="text-blue-600 hover:underline">Don't have an account? Sign Up</Link>
+            <Link to="/login" className="text-blue-600 hover:underline">Already have an account? Login</Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Signup;

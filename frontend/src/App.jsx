@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 import BookList from './pages/BookList';
 import AdminDashboard from './pages/AdminDashboard';
 import AuthService from './services/auth.service';
@@ -53,6 +54,7 @@ function App() {
       <div className="container mx-auto px-4 mt-8">
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<Navigate to="/books" />} />
           <Route path="/books" element={<BookList />} /> 
           <Route path="/admin" element={currentUser && currentUser.roles.includes("ROLE_ADMIN") ? <AdminDashboard /> : <Navigate to="/login" />} />
