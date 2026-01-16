@@ -1,9 +1,11 @@
 # Build Stage
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 COPY . .
+# Rollup dynamic import fix for Alpine
+ENV ROLLUP_WATCH=false
 RUN npm run build
 
 # Production Stage
