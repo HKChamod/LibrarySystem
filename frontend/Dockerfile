@@ -1,8 +1,8 @@
 # Build Stage
-FROM node:20-alpine AS build
+FROM node:20-slim AS build
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
+COPY package.json ./
+RUN npm install
 COPY . .
 # Rollup dynamic import fix for Alpine
 ENV ROLLUP_WATCH=false
